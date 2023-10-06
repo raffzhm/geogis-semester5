@@ -19,7 +19,7 @@ const basemap = new TileLayer({
 
 const defaultstartmap = new View({
   center: fromLonLat(place),
-  zoom: 12,
+  zoom: 16,
 });
 
 export const overlay = new Overlay({
