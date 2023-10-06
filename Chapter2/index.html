@@ -17,39 +17,72 @@
         <h2>Kelas : D4TI 3A</h2>
         <div id="map" style="height: 500px;"></div>
 
+        <div id='map'></div>
+
+        <input type="hidden" id="idmarker" name="idmarker" value="">
+    
+        <div id="popupinfo" class="ol-popup">
+            <b id="popupinfo-title"></b>
+            <div id="popupinfo-content"></div>
+            <div id="popupinfo-delete">
+                <input type="hidden" id="idmarker" name="idmarker" value="">
+                <button id="hapusbutton" type="button">Hapus</button><button id="hitungcogbutton" type="button">Hitung COG</button><br>
+            </div>
+            
+        </div>
+    
+        <div id="popup" class="ol-popup">
+            <b id="popup-title">Input Center of Gravity</b><a href="#" id="popup-closer" class="ol-popup-closer"></a>
+            <div id="popup-content"></div>
+            <div id="popup-input">
+                Nama : <input type="text" id="name" name="name" required><br>
+                Volume : <input type="text" id="volume" name="volume" required><br>
+                <input type="hidden" id="long" name="long" value="">
+                <input type="hidden" id="lat" name="lat" value="">
+                <button id="insertmarkerbutton" type="button">Input</button><br>
+            </div>
+        </div>
         <div class="point-table">
-            <h1>Data-Data (Polyline, Point, Polygon) </h1>
+            <h1>Type Point</h1>
             <table id="pointTable" border="1">
                 <thead>
                     <tr>
-                        <th>No</th>
                         <th>Name</th>
-                        <th>Coordinates</th>
+                        <th>Coordinate</th>
                         <th>Type</th>
                     </tr>
                 </thead>
-                <tbody id="geojson-table"></tbody>
+                <tbody id="lokasi"></tbody>
             </table>
         </div>
         
-
-        <!-- Add a table to display GeoJSON data -->
-        <!-- <table border="1">
-            <tr>
-                <th>No</th>
-                <th>Name</th>
-                <th>Desa</th>
-                <th>Coordinates</th>
-                <th>Type</th>
-            </tr>
-            <tbody id="geojson-table"> -->
-
-                <!-- Rows for GeoJSON data will be added here -->
-            <!-- </tbody>
-        </table> -->
-        <!-- Include OpenLayers via CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/openlayers@4.6.5/dist/ol.js"></script>
-
+        <div class="polygon-table">
+            <h1>Type Polygon</h1>
+            <table id="polygonTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Coordinate</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody id="polygon"></tbody>
+            </table>
+        </div>
+        
+        <div class="polyline-table">
+            <h1>Type Polyline</h1>
+            <table id="polylineTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Coordinate</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody id="line"></tbody>
+            </table>
+        </div>
         <!-- Your JavaScript code here -->
         <script src="js/script.js" type="module"></script>
 
