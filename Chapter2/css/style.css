@@ -1,53 +1,58 @@
+@import "https://cdn.skypack.dev/ol/ol.css";
+
+html,
 body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: Arial, sans-serif;
+  margin: 0;
+  height: 100%;
 }
 
-h2{
-    font-size: 12px;
-}
 
-.map {
-    width: 100%;
-    height: 400px;
-    margin-bottom: 20px;
-}
+    #map {
+        width: 80%; /* Set the desired width */
+        height: 400px; /* Set the desired height */
+        margin: 0 auto; /* Center the map horizontally */
+    }
 
-#info-table {
-    max-width: 800px;
-    width: 100%;
-}
 
-#info-table h2 {
-    text-align: center;
+.ol-popup {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  padding: 15px;
+  border-radius: 10px;
+  font: 0.9em sans-serif;
+  border: 1px solid #cccccc;
+  bottom: 12px;
+  left: -50px;
+  min-width: 280px;
 }
-
-#info-table table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #ccc;
+.ol-popup:after, .ol-popup:before {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
-
-#info-table th, #info-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
+.ol-popup:after {
+  border-top-color: white;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
 }
-
-#info-table th {
-    background-color: #f2f2f2;
+.ol-popup:before {
+  border-top-color: #cccccc;
+  border-width: 11px;
+  left: 48px;
+  margin-left: -11px;
 }
-
-#info-table td {
-    font-size: 14px;
+.ol-popup-closer {
+  text-decoration: none;
+  position: absolute;
+  top: 2px;
+  right: 8px;
 }
-
-#info-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-#info-table tr:hover {
-    background-color: #e6e6e6;
+.ol-popup-closer:after {
+  content: "✖";
 }

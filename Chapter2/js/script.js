@@ -1,142 +1,125 @@
-const map = new ol.Map({
-    target: 'map',
-    view: new ol.View({
-        center: ol.proj.fromLonLat([103.81128613262871,
-            1.3247366000091603]),
-        zoom: 12
-    })
-});
+import {map} from './config/peta.js';
+import {onClosePopupClick,onDeleteMarkerClick,onSubmitMarkerClick,onMapClick,onMapPointerMove,disposePopover} from './controller/popup.js';
+import {onClick} from 'https://jscroot.github.io/element/croot.js';
+import {getAllCoordinates} from './controller/cog.js';
 
-const tileLayer = new ol.layer.Tile({
-    source: new ol.source.OSM()
-});
-map.addLayer(tileLayer);
 
-function addGeoJSONToMapAndTable(geoJSONUrl, map, table) {
-    fetch(geoJSONUrl)
+document.addEventListener("DOMContentLoaded", () => {
+    const pointTable = document.getElementById("pointTable").getElementsByTagName('tbody')[0];
+
+    fetch("map.json") // Ganti "data.json" dengan nama file JSON Anda
         .then(response => response.json())
         .then(data => {
-            const vectorSource = new ol.source.Vector({
-                features: (new ol.format.GeoJSON()).readFeatures(data)
-            });
-            const vectorLayer = new ol.layer.Vector({
-                source: vectorSource
-            });
-            map.addLayer(vectorLayer);
-
-            let rowNum = 1;
-
-            const tableBody = document.getElementById('geojson-table');
-
             data.features.forEach(feature => {
-                const row = tableBody.insertRow();
-                const numCell = row.insertCell(0);
-                const nameCell = row.insertCell(1);
-                const coordCell = row.insertCell(2);
-                const typeCell = row.insertCell(3);
-                numCell.innerHTML = rowNum;
-                nameCell.innerHTML = feature.properties.name;
-
-                const coordinates = feature.geometry.coordinates;
-                let coordinateString = "";
-
                 if (feature.geometry.type === "Point") {
-                    const lat = coordinates[1];
-                    const long = coordinates[0];
-                    coordinateString = `${lat}, ${long}`;
-
-                    const iconUrl = feature.properties.icon;
-                    const iconUrl2 = feature.properties.icon2;
-
-                    const marker = new ol.Feature({
-                        geometry: new ol.geom.Point(ol.proj.fromLonLat([long, lat]))
-                    });
-
-                    if (iconUrl || iconUrl2) {
-                        const markerStyle = new ol.style.Style({
-                            image: new ol.style.Icon({
-                                src: iconUrl || iconUrl2,
-                                scale: 0.1
-                            }),
-                        });
-                        marker.setStyle(markerStyle);
-                    }
-
-                    vectorSource.addFeature(marker);
-                } else if (feature.geometry.type === "Polygon") {
-                    const coordinates = feature.geometry.coordinates;
-                    const polygonCoordinates = coordinates.map(linearRingCoords => {
-                        return linearRingCoords.map(coordinate => {
-                            return ol.proj.fromLonLat(coordinate);
-                        });
-                    });
-
-                    const polygon = new ol.geom.Polygon(polygonCoordinates);
-
-                    const featureGeom = new ol.Feature({
-                        geometry: polygon
-                    });
-                    vectorSource.addFeature(featureGeom);
+                    const row = pointTable.insertRow();
+                    const nameCell = row.insertCell(0);
+                    const coordinatesCell = row.insertCell(1);
+                    const typeCell = row.insertCell(2);
+                    nameCell.innerText = feature.properties.name;
+                    coordinatesCell.innerText = JSON.stringify(feature.geometry.coordinates);
+                    typeCell.innerText = feature.geometry.type;
                     
-                } else if (feature.geometry.type === "LineString") {
-                    const coordinates = feature.geometry.coordinates;
-                    const lineStringCoords = coordinates.map(coordinate => {
-                        return ol.proj.fromLonLat(coordinate);
-                    });
-
-                    if (feature.properties.curve) {
-                        const curve = feature.properties.curve;
-                        const curveLineStringCoords = [];
-
-                        for (let i = 0; i < lineStringCoords.length - 1; i++) {
-                            curveLineStringCoords.push(lineStringCoords[i]);
-
-                            for (let t = 0.1; t <= 0.9; t += 0.1) {
-                                const x = (1 - t) * (1 - t) * lineStringCoords[i][0] +
-                                          2 * (1 - t) * t * curve[i][0] +
-                                          t * t * lineStringCoords[i + 1][0];
-
-                                const y = (1 - t) * (1 - t) * lineStringCoords[i][1] +
-                                          2 * (1 - t) * t * curve[i][1] +
-                                          t * t * lineStringCoords[i + 1][1];
-
-                                curveLineStringCoords.push([x, y]);
-                            }
-                        }
-
-                        curveLineStringCoords.push(lineStringCoords[lineStringCoords.length - 1]);
-
-                        const curveLineString = new ol.geom.LineString(curveLineStringCoords);
-                        const featureGeom = new ol.Feature({
-                            geometry: curveLineString
-                        });
-                        vectorSource.addFeature(featureGeom);
-                    } else {
-                        const lineString = new ol.geom.LineString(lineStringCoords);
-                        const featureGeom = new ol.Feature({
-                            geometry: lineString
-                        });
-                        vectorSource.addFeature(featureGeom);
-                    }
                 }
-
-                coordinates.forEach(coordinate => {
-                    const lat = coordinate[1];
-                    const long = coordinate[0];
-                    coordinateString += `${lat}, ${long}<br>`;
-                });
-
-                coordCell.innerHTML = coordinateString;
-                typeCell.innerHTML = feature.geometry.type;
-                rowNum++;
             });
         })
-        .catch(error => {
-            console.error('Error fetching GeoJSON:', error);
-        });
-}
+        .catch(error => console.error("Terjadi kesalahan:", error));
+});
 
-// Call the function for each GeoJSON URL
-addGeoJSONToMapAndTable("map.json", map, document.querySelector('table'));
-addGeoJSONToMapAndTable("map.json", map, document.querySelector('table'));
-addGeoJSONToMapAndTable("map.json", map, document.querySelector('table'));
+document.addEventListener("DOMContentLoaded", () => {
+    const pointTable = document.getElementById("polygonTable").getElementsByTagName('tbody')[0];
+
+    fetch("map.json") // Ganti "data.json" dengan nama file JSON Anda
+        .then(response => response.json())
+        .then(data => {
+            data.features.forEach(feature => {
+                if (feature.geometry.type === "Polygon") {
+                    const row = pointTable.insertRow();
+                    const nameCell = row.insertCell(0);
+                    const coordinatesCell = row.insertCell(1);
+                    const typeCell = row.insertCell(2);
+                    nameCell.innerText = feature.properties.name;
+                    coordinatesCell.innerText = JSON.stringify(feature.geometry.coordinates);
+                    typeCell.innerText = feature.geometry.type;
+                    
+                }
+            });
+        })
+        .catch(error => console.error("Terjadi kesalahan:", error));
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const pointTable = document.getElementById("polylineTable").getElementsByTagName('tbody')[0];
+
+    fetch("map.json") // Ganti "data.json" dengan nama file JSON Anda
+        .then(response => response.json())
+        .then(data => {
+            data.features.forEach(feature => {
+                if (feature.geometry.type === "LineString") {
+                    const row = pointTable.insertRow();
+                    const nameCell = row.insertCell(0);
+                    const coordinatesCell = row.insertCell(1);
+                    const typeCell = row.insertCell(2);
+                    nameCell.innerText = feature.properties.name;
+                    coordinatesCell.innerText = JSON.stringify(feature.geometry.coordinates);
+                    typeCell.innerText = feature.geometry.type;
+                    
+                }
+            });
+        })
+        .catch(error => console.error("Terjadi kesalahan:", error));
+});
+
+import VectorSource from 'https://cdn.skypack.dev/ol/source/Vector.js';
+import { Vector as VectorLayer } from 'https://cdn.skypack.dev/ol/layer.js';
+import GeoJSON from 'https://cdn.skypack.dev/ol/format/GeoJSON.js';
+
+// Definisikan URL GeoJSON untuk masing-masing jenis fitur
+const polygonGeoJSONUrl = 'map.json';
+const lineStringGeoJSONUrl = 'map.json';
+const pointGeoJSONUrl = 'map.json';
+
+// Buat sumber vektor dan lapisan vektor untuk masing-masing jenis fitur
+const polygonSource = new VectorSource({
+  format: new GeoJSON(),
+  url: polygonGeoJSONUrl,
+});
+
+const lineStringSource = new VectorSource({
+  format: new GeoJSON(),
+  url: lineStringGeoJSONUrl,
+});
+
+const pointSource = new VectorSource({
+  format: new GeoJSON(),
+  url: pointGeoJSONUrl,
+});
+
+const polygonLayer = new VectorLayer({
+  source: polygonSource,
+
+});
+
+const lineStringLayer = new VectorLayer({
+  source: lineStringSource,
+
+});
+
+const pointLayer = new VectorLayer({
+  source: pointSource,
+
+});
+
+// Tambahkan lapisan-lapisan ke peta
+map.addLayer(polygonLayer);
+map.addLayer(lineStringLayer);
+map.addLayer(pointLayer);
+
+onClick('popup-closer',onClosePopupClick);
+onClick('insertmarkerbutton',onSubmitMarkerClick);
+onClick('hapusbutton',onDeleteMarkerClick);
+onClick('hitungcogbutton',getAllCoordinates);
+
+map.on('click', onMapClick);
+map.on('pointermove', onMapPointerMove);
+map.on('movestart', disposePopover);
