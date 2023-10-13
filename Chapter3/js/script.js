@@ -1,4 +1,5 @@
 import {map} from './config/peta.js';
+import { URLGeoJson } from "./template/geocf.js";
 import {onClosePopupClick,onDeleteMarkerClick,onSubmitMarkerClick,onMapClick,onMapPointerMove,disposePopover} from './controller/popup.js';
 import {onClick} from 'https://jscroot.github.io/element/croot.js';
 import {getAllCoordinates} from './controller/cog.js';
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
     const pointTable = document.getElementById("polygonTable").getElementsByTagName('tbody')[0];
 
-    fetch("map.json") // Ganti "data.json" dengan nama file JSON Anda
+    fetch("URLGeoJson") // Ganti "data.json" dengan nama file JSON Anda
         .then(response => response.json())
         .then(data => {
             data.features.forEach(feature => {
