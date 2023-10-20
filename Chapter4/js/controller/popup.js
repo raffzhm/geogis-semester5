@@ -1,7 +1,7 @@
 import {toLonLat} from 'https://cdn.skypack.dev/ol/proj.js';
 import {toStringHDMS} from 'https://cdn.skypack.dev/ol/coordinate.js';
 import {overlay,map,popupinfo,idmarker} from '../config/peta.js';
-import {clickpopup} from '../template/geocf.js';
+import {URLGeoJson, clickpopup, urlPostGCF} from '../template/geocf.js';
 import {insertMarker,deleteMarker} from './marker.js';
 import {setInner,textBlur,onClick, getValue,setValue} from 'https://jscroot.github.io/element/croot.js';
 import { postWithToken } from "https://jscroot.github.io/api/croot.js";
@@ -23,12 +23,20 @@ export function onSubmitMarkerClick() {
     let lat = getValue('lat');
     let name = getValue('name');
     let volume = getValue('volume');
-    let data = {long,lat,volume};
-    postWithToken("https://eoqc0wqfm9sjc6y.m.pipedream.net","Token","dsf9ygf87h98u479y98dj0fs89nfd7",data,afterSubmitCOG);
-    overlay.setPosition(undefined);
-    textBlur('popup-closer');
-    insertMarker(name,long,lat,volume);
-    idmarker.id=idmarker.id+1;
+    let data = {
+      "type" : type,
+      "name" : name,
+      "volume" : volume,
+      "coordinates" : [
+      parseFloat(long),parseFloat(lat)
+    ]
+  };
+  postWithToken(urlPostGCF,"Token","8ddca40f33ea6a385c1601527694005fbc7fd8c2ae5a845179fa6db39b13f794",data,afterSubmitCOG);
+overlay.setPosition(undefined);
+textBlur('popup-closer');
+  insertMarker(name,long,lat,volume);
+  idmarker.id=idmarker.id+1;
+console.log(name)
 }
 
 function afterSubmitCOG(result){
@@ -70,6 +78,8 @@ export function disposePopover() {
 }
 
 export function onMapClick(evt) {
+  const typeSelect = document.getElementById('type');
+  let val = typeSelect.value
     let feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
       return feature;
     });
@@ -78,7 +88,15 @@ export function onMapClick(evt) {
     if (!feature) {
         popupInputMarker(evt);
         return;
+    }else if (val == "Polygon" || val == "LineString" || val == "Circle" || val == "Point"){
+      popupInputMarker(evt)
     }else{
-        popupGetMarker(evt,feature);
+      popupGetMarker(evt,feature);
     }
   }
+
+export function GetCoorLonLat(evt) {
+    var point = map.getCoordinateFromPixel(evt.pixel);
+    var lonLat = ol.proj.toLonLat(point); 
+    console.log(lonLat);  // note the ordering of the numbers
+}

@@ -1,4 +1,5 @@
 export let URLGeoJson = "https://asia-southeast2-argon-fire-401902.cloudfunctions.net/fetchGeoJson";
+export let urlPostGCF = "https://asia-southeast2-argon-fire-401902.cloudfunctions.net/postGIS4";
 export let tableTag="tr";
 export let tableRowClass="content is-small";
 export let tableTemplate=`
