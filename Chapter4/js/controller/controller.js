@@ -2,7 +2,6 @@ import {setInner,addChild } from "https://jscroot.github.io/element/croot.js";
 import {tableTemplate, tableRowClass, tableTag} from "../template/geocf.js";
 import {map} from '../config/peta.js';
 import Draw from 'https://cdn.skypack.dev/ol/interaction/Draw.js';
-import { Addlayer } from "../../../ch1/verjscroot/getfunction.js";
 
 export function isiRowPoint(value){
     if (value.geometry.type === "Point") {
