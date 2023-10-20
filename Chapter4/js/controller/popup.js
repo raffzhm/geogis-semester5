@@ -32,7 +32,7 @@ export function onSubmitMarkerClick() {
       parseFloat(long),parseFloat(lat)
     ]
   };
-  postWithToken(urlPostGCF,"Token","8ddca40f33ea6a385c1601527694005fbc7fd8c2ae5a845179fa6db39b13f794",data,afterSubmitCOG);
+  postWithToken(urlPostGCF,"Token","dsf9ygf87h98u479y98dj0fs89nfd7",data,afterSubmitCOG);
 overlay.setPosition(undefined);
 textBlur('popup-closer');
   insertMarker(name,long,lat,volume);
